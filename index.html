@@ -431,12 +431,12 @@ const DEFAULTS = () => ({
   ],
   workspaceTab: '근무 공간',
   workspaceMain: 'assets/ieg-building.jpg',
-  workspaceSub1: '', workspaceSub2: '',
+  workspaceSub1: 'assets/ieg-lounge.jpg', workspaceSub2: 'assets/ieg-showroom.jpg',
   positionsTab: '모집 분야',
   jobs: [
     {
       title: '영업관리',
-      empType: '', career: '', headcount: 'OO명', edu: '',
+      empType: '', career: '', headcount: '0명', edu: '',
       duties: '- 매출 데이터 관리 및 분석\n- 영업 실적 회계 및 리포트 작성\n- 영업 활동 및 수주 관련 회계 관리\n- 영업 지원 업무(안전/제안/자금 관리 등)\n- 라이센싱 및 기타 데이터 관리\n- 나라장터 관련 업무 지원',
       require: '- 학력 무관',
       prefer: '- 나라장터, 아마란스 10 활용 능숙자 우대',
@@ -489,7 +489,7 @@ class Component extends DCLogic {
     r.onload = () => this.setState(s => ({ d: { ...s.d, [k]: r.result } }));
     r.readAsDataURL(file);
   };
-  addJob = () => this.setState(s => ({ d: { ...s.d, jobs: [...s.d.jobs, { title: '새 직무명', empType: '정규직', career: '신입 / 경력', headcount: 'O명', edu: '대졸 이상', duties: '', require: '', prefer: '', location: '' }] } }));
+  addJob = () => this.setState(s => ({ d: { ...s.d, jobs: [...s.d.jobs, { title: '새 직무명', empType: '정규직', career: '신입 / 경력', headcount: '0명', edu: '대졸 이상', duties: '', require: '', prefer: '', location: '' }] } }));
   addStep = () => this.setState(s => ({ d: { ...s.d, steps: [...s.d.steps, { name: '새 단계' }] } }));
   addRevenue = () => this.setState(s => ({ d: { ...s.d, revenue: [...s.d.revenue, { year: '구간', pct: '000%' }] } }));
   toggle = (e) => {
