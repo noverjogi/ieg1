@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet>
+<link rel="stylesheet" as="style" crossorigin href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css" />
+<script src="https://cdn.jsdelivr.net/npm/html2canvas@1.4.1/dist/html2canvas.min.js"></script>
+<style>
+  * { box-sizing: border-box; }
+  body { margin: 0; font-family: "Pretendard Variable", Pretendard, -apple-system, sans-serif; }
+  input, textarea, button { font-family: inherit; }
+  textarea { resize: vertical; }
+  a { color: #3B7CFF; text-decoration: none; }
+  a:hover { color: #2A5FD9; }
+  input:focus, textarea:focus { outline: none; border-color: #3B7CFF !important; }
+  ::-webkit-scrollbar { width: 10px; height: 10px; }
+  ::-webkit-scrollbar-thumb { background: #d5d5da; border-radius: 8px; }
+</style>
+</helmet>
+<div style="display:flex;min-height:100vh;background:#ececed;align-items:flex-start;">
+
+  <!-- ============ LEFT: EDITOR PANEL ============ -->
+  <aside style="width:410px;flex:0 0 410px;position:sticky;top:0;align-self:flex-start;height:100vh;overflow-y:auto;background:#ffffff;border-right:1px solid #e4e4e8;">
+    <div style="padding:22px 22px 16px;border-bottom:1px solid #eeeef1;position:sticky;top:0;background:#fff;z-index:5;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <img src="assets/ieg-logo.png" alt="IEG" style="height:26px;width:auto;object-fit:contain;" />
+        <div style="font-size:14px;font-weight:800;color:#1B2340;line-height:1.1;">아이지 채용 공고 생성기</div>
+      </div>
+      <div style="display:flex;gap:8px;margin-top:16px;">
+        <button onClick="{{ downloadPng }}" style="flex:1;padding:12px 10px;border:none;border-radius:100px;background:#3B7CFF;color:#fff;font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap;">{{ dlLabel }}</button>
+        <button onClick="{{ exportData }}" style="flex:1;padding:12px 10px;border:1.5px solid #3B7CFF;border-radius:100px;background:#fff;color:#3B7CFF;font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap;">데이터 내보내기</button>
+        <button onClick="{{ reset }}" style="flex:0 0 auto;padding:12px 16px;border:1.5px solid #ddd;border-radius:100px;background:#fff;color:#555;font-size:12.5px;font-weight:700;cursor:pointer;">초기화</button>
+      </div>
+      <div style="font-size:11px;color:#aaa;margin-top:9px;line-height:1.45;">완성된 오른쪽 공고만 고화질 PNG로 저장됩니다.<br />입력 내용은 데이터 내보내기로 저장·공유할 수 있습니다.</div>
+    </div>
+
+    <!-- 기본 정보 -->
+    <section style="border-bottom:1px solid #eeeef1;">
+      <button data-sec="basic" onClick="{{ toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 22px;background:none;border:none;cursor:pointer;text-align:left;">
+        <span style="font-size:13px;font-weight:800;color:#1B2340;">01 · 기본 정보 (HERO)</span>
+        <span style="font-size:12px;color:#3B7CFF;font-weight:800;">{{ openBasic }}</span>
+      </button>
+      <sc-if value="{{ open.basic }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:0 22px 20px;display:flex;flex-direction:column;gap:12px;">
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">상단 라벨 (검정 알약)</label><input data-k="recruitLabel" value="{{ d.recruitLabel }}" onInput="{{ onField }}" placeholder="예: 2026 (주)아이지 채용" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">대형 타이틀 (줄바꿈 가능)</label><textarea data-k="mainTitle" onInput="{{ onField }}" value="{{ d.mainTitle }}" placeholder="예: 미래 산업을 함께 만들 동료" style="width:100%;min-height:66px;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;line-height:1.5;"></textarea></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">서브 문구</label><input data-k="heroSub" value="{{ d.heroSub }}" onInput="{{ onField }}" placeholder="예: IEG와 함께 성장할 새로운 인재를 찾습니다!" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">모집 직무 태그</label><input data-k="jobHeadline" value="{{ d.jobHeadline }}" onInput="{{ onField }}" placeholder="예: 스마트팩토리 제어설계 엔지니어 채용" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">HERO 하단 스트립 문구</label><input data-k="heroStrip" value="{{ d.heroStrip }}" onInput="{{ onField }}" placeholder="예: (주)아이지에서 미래를 함께 만들 인재를 기다립니다" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">기술 키워드 (쉼표로 구분)</label><input data-k="heroTags" value="{{ d.heroTags }}" onInput="{{ onField }}" placeholder="SMART FACTORY, ROBOT, AI" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">HERO 이미지 (선택)</label><input type="file" accept="image/*" data-k="heroImg" onChange="{{ onImg }}" style="width:100%;font-size:12px;color:#666;" /></div>
+      </div>
+      </sc-if>
+    </section>
+
+    <!-- 회사 소개 -->
+    <section style="border-bottom:1px solid #eeeef1;">
+      <button data-sec="about" onClick="{{ toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 22px;background:none;border:none;cursor:pointer;text-align:left;">
+        <span style="font-size:13px;font-weight:800;color:#1B2340;">02 · 회사 소개</span>
+        <span style="font-size:12px;color:#3B7CFF;font-weight:800;">{{ openAbout }}</span>
+      </button>
+      <sc-if value="{{ open.about }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:0 22px 20px;display:flex;flex-direction:column;gap:12px;">
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">섹션 탭 제목</label><input data-k="aboutTab" value="{{ d.aboutTab }}" onInput="{{ onField }}" placeholder="예: 우리 회사는요?" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">헤드라인</label><input data-k="aboutHeadline" value="{{ d.aboutHeadline }}" onInput="{{ onField }}" placeholder="예: IEG는 미래 산업 기술 전문 기업입니다" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">회사 소개 본문</label><textarea data-k="aboutBody" onInput="{{ onField }}" value="{{ d.aboutBody }}" placeholder="회사 소개 문구를 입력하세요." style="width:100%;min-height:90px;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;line-height:1.5;"></textarea></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">사업 분야 키워드 (쉼표로 구분)</label><input data-k="bizKeywords" value="{{ d.bizKeywords }}" onInput="{{ onField }}" placeholder="SMART FACTORY, ROBOT, AUTOMATION" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">회사 소개 이미지 (선택)</label><input type="file" accept="image/*" data-k="aboutImg" onChange="{{ onImg }}" style="width:100%;font-size:12px;color:#666;" /></div>
+      </div>
+      </sc-if>
+    </section>
+
+    <!-- 성장 그래픽 -->
+    <section style="border-bottom:1px solid #eeeef1;">
+      <button data-sec="numbers" onClick="{{ toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 22px;background:none;border:none;cursor:pointer;text-align:left;">
+        <span style="font-size:13px;font-weight:800;color:#1B2340;">03 · 성장 그래픽</span>
+        <span style="font-size:12px;color:#3B7CFF;font-weight:800;">{{ openNumbers }}</span>
+      </button>
+      <sc-if value="{{ open.numbers }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:0 22px 20px;display:flex;flex-direction:column;gap:12px;">
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">성장 헤드라인</label><input data-k="growthHeadline" value="{{ d.growthHeadline }}" onInput="{{ onField }}" placeholder="예: 연 평균 매출 성장 속도는 로켓!" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
+        <div style="font-size:11px;font-weight:800;color:#999;margin-top:4px;line-height:1.4;">구간 라벨 &amp; 수치 (그래프 높이는 입력한 수치를 따릅니다)</div>
+        <sc-for list="{{ d.revenue }}" as="r" hint-placeholder-count="5">
+          <div style="display:flex;gap:8px;align-items:center;">
+            <input data-arr="revenue" data-i="{{ $index }}" data-f="year" value="{{ r.year }}" onInput="{{ onArr }}" placeholder="구간 (예: 2022)" style="flex:1;min-width:0;padding:9px 11px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" />
+            <input data-arr="revenue" data-i="{{ $index }}" data-f="pct" value="{{ r.pct }}" onInput="{{ onArr }}" placeholder="수치 (예: 104%)" style="flex:1;min-width:0;padding:9px 11px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" />
+            <button data-arr="revenue" data-i="{{ $index }}" onClick="{{ removeItem }}" style="flex:0 0 auto;width:34px;height:34px;border:1px solid #eee;border-radius:8px;background:#EFF4FF;color:#3B7CFF;font-size:16px;cursor:pointer;">×</button>
+          </div>
+        </sc-for>
+        <button onClick="{{ addRevenue }}" style="padding:9px;border:1.5px dashed #ddd;border-radius:8px;background:#fafafa;color:#666;font-size:12px;font-weight:700;cursor:pointer;">+ 구간 추가</button>
+      </div>
+      </sc-if>
+    </section>
+
+    <!-- 복리후생 -->
+    <section style="border-bottom:1px solid #eeeef1;">
+      <button data-sec="welfare" onClick="{{ toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 22px;background:none;border:none;cursor:pointer;text-align:left;">
+        <span style="font-size:13px;font-weight:800;color:#1B2340;">04 · 복리 후생</span>
+        <span style="font-size:12px;color:#3B7CFF;font-weight:800;">{{ openWelfare }}</span>
+      </button>
+      <sc-if value="{{ open.welfare }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:0 22px 20px;display:flex;flex-direction:column;gap:12px;">
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">섹션 탭 제목</label><input data-k="welfareTab" value="{{ d.welfareTab }}" onInput="{{ onField }}" placeholder="예: 우리 회사의 복지는?" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
+        <sc-for list="{{ d.welfare }}" as="w" hint-placeholder-count="6">
+          <div style="border:1px solid #eee;border-radius:8px;padding:10px;display:flex;flex-direction:column;gap:7px;background:#fafafa;">
+            <input data-arr="welfare" data-i="{{ $index }}" data-f="name" value="{{ w.name }}" onInput="{{ onArr }}" placeholder="복지명" style="width:100%;padding:8px 10px;border:1px solid #e3e3e6;border-radius:7px;font-size:13px;font-weight:700;color:#333;" />
+            <input data-arr="welfare" data-i="{{ $index }}" data-f="desc" value="{{ w.desc }}" onInput="{{ onArr }}" placeholder="복지 설명 (선택)" style="width:100%;padding:8px 10px;border:1px solid #e3e3e6;border-radius:7px;font-size:12px;color:#555;" />
+          </div>
+        </sc-for>
+      </div>
+      </sc-if>
+    </section>
+
+    <!-- 근무공간 -->
+    <section style="border-bottom:1px solid #eeeef1;">
+      <button data-sec="workspace" onClick="{{ toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 22px;background:none;border:none;cursor:pointer;text-align:left;">
+        <span style="font-size:13px;font-weight:800;color:#1B2340;">05 · 근무 공간</span>
+        <span style="font-size:12px;color:#3B7CFF;font-weight:800;">{{ openWorkspace }}</span>
+      </button>
+      <sc-if value="{{ open.workspace }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:0 22px 20px;display:flex;flex-direction:column;gap:12px;">
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">섹션 탭 제목</label><input data-k="workspaceTab" value="{{ d.workspaceTab }}" onInput="{{ onField }}" placeholder="예: 근무 공간" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">메인 이미지</label><input type="file" accept="image/*" data-k="workspaceMain" onChange="{{ onImg }}" style="width:100%;font-size:12px;color:#666;" /></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">서브 이미지 1 (선택)</label><input type="file" accept="image/*" data-k="workspaceSub1" onChange="{{ onImg }}" style="width:100%;font-size:12px;color:#666;" /></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">서브 이미지 2 (선택)</label><input type="file" accept="image/*" data-k="workspaceSub2" onChange="{{ onImg }}" style="width:100%;font-size:12px;color:#666;" /></div>
+      </div>
+      </sc-if>
+    </section>
+
+    <!-- 모집분야 -->
+    <section style="border-bottom:1px solid #eeeef1;">
+      <button data-sec="positions" onClick="{{ toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 22px;background:none;border:none;cursor:pointer;text-align:left;">
+        <span style="font-size:13px;font-weight:800;color:#1B2340;">06 · 모집 분야</span>
+        <span style="font-size:12px;color:#3B7CFF;font-weight:800;">{{ openPositions }}</span>
+      </button>
+      <sc-if value="{{ open.positions }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:0 22px 20px;display:flex;flex-direction:column;gap:12px;">
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">섹션 탭 제목</label><input data-k="positionsTab" value="{{ d.positionsTab }}" onInput="{{ onField }}" placeholder="예: 모집 분야" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
+        <sc-for list="{{ d.jobs }}" as="j" hint-placeholder-count="1">
+          <div style="border:1px solid #e6e6ea;border-radius:10px;padding:12px;display:flex;flex-direction:column;gap:8px;background:#fbfbfc;">
+            <div style="display:flex;justify-content:space-between;align-items:center;"><span style="font-size:11px;font-weight:800;color:#3B7CFF;">직무 {{ j.num }}</span><button data-arr="jobs" data-i="{{ $index }}" onClick="{{ removeItem }}" style="width:28px;height:28px;border:1px solid #eee;border-radius:7px;background:#fff;color:#3B7CFF;font-size:14px;cursor:pointer;">×</button></div>
+            <input data-arr="jobs" data-i="{{ $index }}" data-f="title" value="{{ j.title }}" onInput="{{ onArr }}" placeholder="직무명(모집부문)" style="width:100%;padding:9px 11px;border:1px solid #e3e3e6;border-radius:7px;font-size:13px;font-weight:700;color:#333;" />
+            <div style="display:flex;gap:6px;">
+              <input data-arr="jobs" data-i="{{ $index }}" data-f="empType" value="{{ j.empType }}" onInput="{{ onArr }}" placeholder="고용형태" style="flex:1;min-width:0;padding:8px 10px;border:1px solid #e3e3e6;border-radius:7px;font-size:12px;color:#333;" />
+              <input data-arr="jobs" data-i="{{ $index }}" data-f="career" value="{{ j.career }}" onInput="{{ onArr }}" placeholder="신입/경력" style="flex:1;min-width:0;padding:8px 10px;border:1px solid #e3e3e6;border-radius:7px;font-size:12px;color:#333;" />
+            </div>
+            <div style="display:flex;gap:6px;">
+              <input data-arr="jobs" data-i="{{ $index }}" data-f="headcount" value="{{ j.headcount }}" onInput="{{ onArr }}" placeholder="모집인원" style="flex:1;min-width:0;padding:8px 10px;border:1px solid #e3e3e6;border-radius:7px;font-size:12px;color:#333;" />
+              <input data-arr="jobs" data-i="{{ $index }}" data-f="edu" value="{{ j.edu }}" onInput="{{ onArr }}" placeholder="학력" style="flex:1;min-width:0;padding:8px 10px;border:1px solid #e3e3e6;border-radius:7px;font-size:12px;color:#333;" />
+            </div>
+            <textarea data-arr="jobs" data-i="{{ $index }}" data-f="duties" onInput="{{ onArr }}" value="{{ j.duties }}" placeholder="담당 업무 (여러 줄 가능)" style="width:100%;min-height:60px;padding:9px 11px;border:1px solid #e3e3e6;border-radius:7px;font-size:12px;color:#333;line-height:1.5;"></textarea>
+            <textarea data-arr="jobs" data-i="{{ $index }}" data-f="require" onInput="{{ onArr }}" value="{{ j.require }}" placeholder="자격 요건 (여러 줄 가능)" style="width:100%;min-height:60px;padding:9px 11px;border:1px solid #e3e3e6;border-radius:7px;font-size:12px;color:#333;line-height:1.5;"></textarea>
+            <textarea data-arr="jobs" data-i="{{ $index }}" data-f="prefer" onInput="{{ onArr }}" value="{{ j.prefer }}" placeholder="우대 사항 (선택)" style="width:100%;min-height:48px;padding:9px 11px;border:1px solid #e3e3e6;border-radius:7px;font-size:12px;color:#333;line-height:1.5;"></textarea>
+            <input data-arr="jobs" data-i="{{ $index }}" data-f="location" value="{{ j.location }}" onInput="{{ onArr }}" placeholder="근무지" style="width:100%;padding:8px 10px;border:1px solid #e3e3e6;border-radius:7px;font-size:12px;color:#333;" />
+          </div>
+        </sc-for>
+        <button onClick="{{ addJob }}" style="padding:10px;border:1.5px dashed #ddd;border-radius:8px;background:#fafafa;color:#666;font-size:12px;font-weight:700;cursor:pointer;">+ 직무 추가</button>
+      </div>
+      </sc-if>
+    </section>
+
+    <!-- 전형절차 -->
+    <section style="border-bottom:1px solid #eeeef1;">
+      <button data-sec="process" onClick="{{ toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 22px;background:none;border:none;cursor:pointer;text-align:left;">
+        <span style="font-size:13px;font-weight:800;color:#1B2340;">07 · 전형 절차</span>
+        <span style="font-size:12px;color:#3B7CFF;font-weight:800;">{{ openProcess }}</span>
+      </button>
+      <sc-if value="{{ open.process }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:0 22px 20px;display:flex;flex-direction:column;gap:10px;">
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">헤드라인</label><input data-k="processHeadline" value="{{ d.processHeadline }}" onInput="{{ onField }}" placeholder="예: IEG와 함께하는 과정" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
+        <sc-for list="{{ stepCards }}" as="s" hint-placeholder-count="4">
+          <div style="display:flex;gap:8px;align-items:center;">
+            <span style="flex:0 0 26px;font-size:12px;font-weight:800;color:#3B7CFF;">{{ s.num }}</span>
+            <input data-arr="steps" data-i="{{ $index }}" data-f="name" value="{{ s.name }}" onInput="{{ onArr }}" placeholder="단계명" style="flex:1;min-width:0;padding:9px 11px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" />
+            <button data-arr="steps" data-i="{{ $index }}" onClick="{{ removeItem }}" style="flex:0 0 auto;width:34px;height:34px;border:1px solid #eee;border-radius:8px;background:#EFF4FF;color:#3B7CFF;font-size:16px;cursor:pointer;">×</button>
+          </div>
+        </sc-for>
+        <button onClick="{{ addStep }}" style="padding:9px;border:1.5px dashed #ddd;border-radius:8px;background:#fafafa;color:#666;font-size:12px;font-weight:700;cursor:pointer;">+ 단계 추가</button>
+      </div>
+      </sc-if>
+    </section>
+
+    <!-- 지원정보 -->
+    <section style="border-bottom:1px solid #eeeef1;">
+      <button data-sec="apply" onClick="{{ toggle }}" style="width:100%;display:flex;justify-content:space-between;align-items:center;padding:16px 22px;background:none;border:none;cursor:pointer;text-align:left;">
+        <span style="font-size:13px;font-weight:800;color:#1B2340;">08 · 지원 정보</span>
+        <span style="font-size:12px;color:#3B7CFF;font-weight:800;">{{ openApply }}</span>
+      </button>
+      <sc-if value="{{ open.apply }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:0 22px 24px;display:flex;flex-direction:column;gap:12px;">
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">CTA 헤드라인 (줄바꿈 가능)</label><textarea data-k="applyHeadline" onInput="{{ onField }}" value="{{ d.applyHeadline }}" style="width:100%;min-height:56px;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;line-height:1.5;"></textarea></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">지원 기간</label><input data-k="applyPeriod" value="{{ d.applyPeriod }}" onInput="{{ onField }}" placeholder="2026.00.00 ~ 채용시" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">지원 방법</label><input data-k="applyMethod" value="{{ d.applyMethod }}" onInput="{{ onField }}" placeholder="사람인 / 잡코리아 / 이메일" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
+      </div>
+      </sc-if>
+    </section>
+  </aside>
+
+  <!-- ============ RIGHT: LIVE POSTER PREVIEW ============ -->
+  <main style="flex:1;display:flex;justify-content:center;padding:40px 40px 80px;overflow-x:auto;">
+    <div ref="{{ poster }}" style="width:840px;flex:0 0 840px;background:#DFE9FF;padding:26px;display:flex;flex-direction:column;gap:22px;color:#333333;">
+
+      <!-- HERO -->
+      <section style="position:relative;background:radial-gradient(120% 90% at 50% 0%,#16205A 0%,#0B1030 60%,#070A22 100%);border-radius:22px;padding:80px 44px 76px;overflow:hidden;aspect-ratio:3/4;display:flex;flex-direction:column;justify-content:center;">
+        <!-- 회로 그리드 -->
+        <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(120,160,255,.10) 1px,transparent 1px),linear-gradient(90deg,rgba(120,160,255,.10) 1px,transparent 1px);background-size:34px 34px;z-index:0;"></div>
+        <!-- 타이틀 스포트라이트 -->
+        <div style="position:absolute;top:38%;left:50%;transform:translate(-50%,-50%);width:640px;height:420px;border-radius:50%;background:radial-gradient(circle,rgba(59,124,255,.32) 0%,rgba(59,124,255,0) 68%);z-index:0;"></div>
+        <div style="position:absolute;bottom:-150px;right:-90px;width:360px;height:360px;border-radius:50%;background:radial-gradient(circle,rgba(59,124,255,.16) 0%,rgba(59,124,255,0) 70%);z-index:0;"></div>
+        <!-- HUD 코너 브래킷 -->
+        <div style="position:absolute;top:24px;left:24px;width:34px;height:34px;border-top:2px solid rgba(120,160,255,.5);border-left:2px solid rgba(120,160,255,.5);border-radius:8px 0 0 0;z-index:1;"></div>
+        <div style="position:absolute;top:24px;right:24px;width:34px;height:34px;border-top:2px solid rgba(120,160,255,.5);border-right:2px solid rgba(120,160,255,.5);border-radius:0 8px 0 0;z-index:1;"></div>
+        <div style="position:absolute;bottom:24px;left:24px;width:34px;height:34px;border-bottom:2px solid rgba(120,160,255,.5);border-left:2px solid rgba(120,160,255,.5);border-radius:0 0 0 8px;z-index:1;"></div>
+        <div style="position:absolute;bottom:24px;right:24px;width:34px;height:34px;border-bottom:2px solid rgba(120,160,255,.5);border-right:2px solid rgba(120,160,255,.5);border-radius:0 0 8px 0;z-index:1;"></div>
+
+        <div style="position:relative;z-index:2;display:flex;flex-direction:column;align-items:center;text-align:center;">
+          <img src="assets/ieg-logo.png" alt="IEG" style="height:74px;width:auto;object-fit:contain;display:block;margin-bottom:26px;" />
+          <div style="position:relative;margin:0;display:flex;flex-direction:column;align-items:center;">
+            <div style="font-size:56px;font-weight:900;line-height:1.05;letter-spacing:-.03em;background:linear-gradient(180deg,#C9D9FF,#8FB2FF);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;margin-bottom:12px;">{{ d.recruitLabel }}</div>
+            <sc-if value="{{ titleLead }}" hint-placeholder-val="직원 채용 공고">
+            <h1 style="margin:0;font-size:96px;font-weight:900;line-height:1.08;letter-spacing:-.05em;white-space:pre-line;color:#fff;background:linear-gradient(180deg,#ffffff 0%,#B9CEFF 100%);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">{{ d.mainTitle }}</h1>
+            </sc-if>
+            <div style="margin-top:24px;width:150px;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,#3B7CFF,transparent);"></div>
+          </div>
+          <p style="margin:26px auto 0;font-size:23px;font-weight:600;color:#AFC7FF;letter-spacing:-.01em;max-width:600px;line-height:1.5;">{{ d.heroSub }}</p>
+          <sc-if value="{{ heroImgSrc }}" hint-placeholder-val="">
+            <div style="margin:32px auto 0;width:100%;border-radius:18px;overflow:hidden;height:280px;border:1px solid rgba(120,160,255,.25);">{{ heroImgEl }}</div>
+          </sc-if>
+          <sc-if value="{{ d.jobHeadline }}" hint-placeholder-val="">
+          <div style="margin-top:28px;display:flex;justify-content:center;">
+            <div style="display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);border:1px solid rgba(120,160,255,.3);border-radius:100px;padding:11px 24px;">
+              <div style="width:9px;height:9px;border-radius:50%;background:#3B7CFF;"></div>
+              <span style="font-size:17px;font-weight:800;color:#fff;letter-spacing:-.01em;">{{ d.jobHeadline }}</span>
+            </div>
+          </div>
+          </sc-if>
+          <div style="margin-top:24px;display:flex;flex-wrap:wrap;gap:8px;justify-content:center;">
+            <sc-for list="{{ heroTagList }}" as="t" hint-placeholder-count="4">
+              <span style="font-size:12px;font-weight:700;color:#AFC7FF;background:rgba(59,124,255,.12);border:1px solid rgba(120,160,255,.28);border-radius:100px;padding:7px 14px;letter-spacing:.06em;">{{ t }}</span>
+            </sc-for>
+          </div>
+        </div>
+      </section>
+
+      <!-- HERO STRIP -->
+      <sc-if value="{{ d.heroStrip }}" hint-placeholder-val="">
+      <div style="text-align:center;padding:4px 10px 8px;">
+        <p style="margin:0;font-size:18px;font-weight:700;color:#1B2340;letter-spacing:-.01em;"><span style="color:#FF5C8A;">{{ d.companyKr }}</span>{{ heroStripRest }}</p>
+      </div>
+      </sc-if>
+
+      <!-- ABOUT -->
+      <section style="background:#ffffff;border-radius:22px;padding:44px;">
+        <div style="display:flex;justify-content:center;margin-bottom:30px;">
+          <span style="display:inline-flex;align-items:center;background:#3B7CFF;color:#fff;font-size:20px;font-weight:800;letter-spacing:-.01em;padding:11px 28px;border-radius:100px;">{{ d.aboutTab }}</span>
+        </div>
+        <h2 style="margin:0 0 20px;font-size:29px;font-weight:800;line-height:1.4;color:#1B2340;letter-spacing:-.02em;text-align:center;">{{ d.aboutHeadline }}</h2>
+        <p style="margin:0 auto;font-size:16px;line-height:1.8;color:#666;max-width:620px;text-align:center;white-space:pre-line;">{{ d.aboutBody }}</p>
+        <div style="margin-top:26px;display:flex;flex-wrap:wrap;gap:9px;justify-content:center;">
+          <sc-for list="{{ bizList }}" as="b" hint-placeholder-count="6">
+            <span style="font-size:13px;font-weight:800;color:#3B7CFF;border:1.5px solid #B9CEFF;background:#EFF4FF;border-radius:100px;padding:9px 17px;letter-spacing:.04em;">{{ b }}</span>
+          </sc-for>
+        </div>
+        <sc-if value="{{ aboutImgSrc }}" hint-placeholder-val="">
+          <div style="margin-top:28px;border-radius:18px;overflow:hidden;height:260px;">{{ aboutImgEl }}</div>
+        </sc-if>
+        <div style="margin-top:42px;padding-top:40px;border-top:1px solid #eef0f4;">
+          <div style="display:flex;justify-content:center;margin-bottom:8px;">
+            <span style="display:inline-flex;align-items:center;gap:8px;font-size:22px;font-weight:900;color:#1B2340;letter-spacing:-.02em;">{{ d.growthHeadline }} <span style="font-size:22px;">🚀</span></span>
+          </div>
+          <div>{{ growthGraphic }}</div>
+        </div>
+      </section>
+
+      <!-- WELFARE -->
+      <section style="background:#ffffff;border-radius:22px;padding:44px;">
+        <div style="display:flex;justify-content:center;margin-bottom:34px;">
+          <span style="display:inline-flex;align-items:center;background:#3B7CFF;color:#fff;font-size:20px;font-weight:800;letter-spacing:-.01em;padding:11px 28px;border-radius:100px;">{{ d.welfareTab }}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:14px 10px;">
+          <sc-for list="{{ welfareCards }}" as="w" hint-placeholder-count="6">
+            <div style="text-align:center;padding:20px 14px;border-radius:16px;">
+              <div style="width:62px;height:62px;border-radius:50%;background:#E8EFFF;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:#3B7CFF;" data-om-raster>{{ w.icon }}</div>
+              <div style="font-size:17px;font-weight:800;color:#3B7CFF;margin-bottom:7px;">{{ w.name }}</div>
+              <sc-if value="{{ w.desc }}" hint-placeholder-val="x">
+                <div style="font-size:13px;line-height:1.55;color:#888;">{{ w.desc }}</div>
+              </sc-if>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <!-- WORKSPACE -->
+      <section style="background:#ffffff;border-radius:22px;padding:44px;">
+        <div style="display:flex;justify-content:center;margin-bottom:30px;">
+          <span style="display:inline-flex;align-items:center;background:#3B7CFF;color:#fff;font-size:20px;font-weight:800;letter-spacing:-.01em;padding:11px 28px;border-radius:100px;">{{ d.workspaceTab }}</span>
+        </div>
+        <sc-if value="{{ wsMainSrc }}" hint-placeholder-val="x">
+          <div style="border-radius:18px;overflow:hidden;height:380px;">{{ wsMainEl }}</div>
+        </sc-if>
+        <sc-if value="{{ hasWsSubs }}" hint-placeholder-val="">
+          <div style="display:grid;grid-template-columns:{{ wsSubCols }};gap:14px;margin-top:14px;">
+            <sc-for list="{{ wsSubEls }}" as="el" hint-placeholder-count="2">
+              <div style="border-radius:16px;overflow:hidden;height:210px;">{{ el }}</div>
+            </sc-for>
+          </div>
+        </sc-if>
+      </section>
+
+      <!-- OPEN POSITIONS -->
+      <section style="background:#ffffff;border-radius:22px;padding:44px;">
+        <div style="display:flex;justify-content:center;margin-bottom:32px;">
+          <span style="display:inline-flex;align-items:center;background:#3B7CFF;color:#fff;font-size:20px;font-weight:800;letter-spacing:-.01em;padding:11px 28px;border-radius:100px;">{{ d.positionsTab }}</span>
+        </div>
+        <div style="border:1px solid #d9e0ee;border-radius:14px;overflow:hidden;">
+          <table style="width:100%;border-collapse:collapse;table-layout:fixed;">
+            <thead>
+              <tr style="background:#3B7CFF;">
+                <th style="width:17%;padding:15px 14px;font-size:14px;font-weight:800;color:#fff;text-align:center;border-right:1px solid rgba(255,255,255,.22);">모집부문</th>
+                <th style="width:37%;padding:15px 14px;font-size:14px;font-weight:800;color:#fff;text-align:center;border-right:1px solid rgba(255,255,255,.22);">업무내용</th>
+                <th style="width:32%;padding:15px 14px;font-size:14px;font-weight:800;color:#fff;text-align:center;border-right:1px solid rgba(255,255,255,.22);">자격요건 및 우대사항</th>
+                <th style="width:14%;padding:15px 14px;font-size:14px;font-weight:800;color:#fff;text-align:center;">모집인원</th>
+              </tr>
+            </thead>
+            <tbody>
+              <sc-for list="{{ jobCards }}" as="j" hint-placeholder-count="1">
+                <tr style="border-top:1px solid #e4e7ef;vertical-align:top;">
+                  <td style="padding:20px 14px;text-align:center;border-right:1px solid #eef0f4;">
+                    <div style="font-size:16px;font-weight:800;color:#12183A;letter-spacing:-.01em;">{{ j.title }}</div>
+                    <sc-if value="{{ j.jobMeta }}" hint-placeholder-val="x">
+                      <div style="margin-top:7px;font-size:12px;font-weight:600;color:#3B7CFF;">{{ j.jobMeta }}</div>
+                    </sc-if>
+                    <sc-if value="{{ j.location }}" hint-placeholder-val="x">
+                      <div style="margin-top:5px;font-size:11px;color:#999;">{{ j.location }}</div>
+                    </sc-if>
+                  </td>
+                  <td style="padding:20px 18px;font-size:13.5px;line-height:1.65;color:#444;white-space:pre-line;border-right:1px solid #eef0f4;">{{ j.duties }}</td>
+                  <td style="padding:20px 18px;border-right:1px solid #eef0f4;">
+                    <sc-if value="{{ j.require }}" hint-placeholder-val="x">
+                      <div style="font-size:12px;font-weight:800;color:#3B7CFF;margin-bottom:5px;">자격 요건</div>
+                      <div style="font-size:13.5px;line-height:1.65;color:#444;white-space:pre-line;">{{ j.require }}</div>
+                    </sc-if>
+                    <sc-if value="{{ j.prefer }}" hint-placeholder-val="x">
+                      <div style="font-size:12px;font-weight:800;color:#3B7CFF;margin:12px 0 5px;">우대 사항</div>
+                      <div style="font-size:13.5px;line-height:1.65;color:#444;white-space:pre-line;">{{ j.prefer }}</div>
+                    </sc-if>
+                  </td>
+                  <td style="padding:20px 14px;text-align:center;font-size:15px;font-weight:800;color:#12183A;">{{ j.headcount }}</td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+      </section>
+
+      <!-- PROCESS -->
+      <section style="background:#22357A;border-radius:22px;padding:44px;">
+        <div style="font-size:13px;font-weight:800;color:#AFC7FF;letter-spacing:.14em;margin-bottom:12px;text-align:center;">RECRUIT PROCESS</div>
+        <h2 style="margin:0 0 38px;font-size:28px;font-weight:800;line-height:1.3;color:#fff;letter-spacing:-.02em;text-align:center;">{{ d.processHeadline }}</h2>
+        <div style="display:flex;align-items:flex-start;">
+          <sc-for list="{{ stepCards }}" as="s" hint-placeholder-count="4">
+            <div style="flex:1;display:flex;flex-direction:column;align-items:center;position:relative;">
+              <sc-if value="{{ s.showLine }}" hint-placeholder-val="">
+                <div style="position:absolute;top:29px;left:50%;width:100%;height:3px;background:rgba(255,255,255,.14);z-index:0;"></div>
+              </sc-if>
+              <div style="position:relative;z-index:1;width:58px;height:58px;border-radius:50%;background:#3B7CFF;color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:900;">{{ s.num }}</div>
+              <div style="margin-top:15px;font-size:15px;font-weight:700;color:#fff;text-align:center;padding:0 6px;">{{ s.name }}</div>
+            </div>
+          </sc-for>
+        </div>
+      </section>
+
+      <!-- APPLY -->
+      <section style="background:#22357A;border-radius:22px;padding:48px 44px;position:relative;overflow:hidden;">
+        <div style="position:relative;z-index:2;">
+          <div style="font-size:13px;font-weight:800;color:#AFC7FF;letter-spacing:.14em;margin-bottom:16px;">지원 안내</div>
+          <sc-if value="{{ d.applyHeadline }}" hint-placeholder-val="">
+          <h2 style="margin:0 0 36px;font-size:40px;font-weight:900;line-height:1.24;color:#fff;white-space:pre-line;letter-spacing:-.02em;">{{ d.applyHeadline }}</h2>
+          </sc-if>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:13px;max-width:620px;">
+            <sc-if value="{{ d.applyPeriod }}" hint-placeholder-val="x">
+              <div style="background:rgba(255,255,255,.07);border-radius:14px;padding:19px 22px;"><div style="font-size:12px;font-weight:700;color:#AFC7FF;margin-bottom:7px;">지원 기간</div><div style="font-size:16px;font-weight:600;color:#fff;">{{ d.applyPeriod }}</div></div>
+            </sc-if>
+            <sc-if value="{{ d.applyMethod }}" hint-placeholder-val="x">
+              <div style="background:rgba(255,255,255,.07);border-radius:14px;padding:19px 22px;"><div style="font-size:12px;font-weight:700;color:#AFC7FF;margin-bottom:7px;">지원 방법</div><div style="font-size:16px;font-weight:600;color:#fff;">{{ d.applyMethod }}</div></div>
+            </sc-if>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script>
+const DEFAULTS = () => ({
+  companyKr: '(주)아이지', companyEn: 'IEG',
+  recruitLabel: '2026년 아이지',
+  mainTitle: '직원 채용 공고',
+  heroSub: '(주)아이지에서 크리에이티브한 인재를 기다립니다',
+  jobHeadline: '',
+  heroStrip: '',
+  heroTags: '',
+  heroImg: '',
+  aboutTab: '우리 회사는요?',
+  aboutHeadline: "아이지는 '국내 대표 테크 에듀' 전문 기업입니다.",
+  aboutBody: '(주)아이지는 스마트팩토리, 로봇, 자동제어, 전기·전자, 반도체, 피지컬 AI 등 미래 산업 기술 분야의 교육 장비와 소프트웨어 및 산업 기술 솔루션을 개발하고 공급하고 있습니다.\n\n전국 대학, 특성화고, 공공기관 등 다양한 교육기관에 교육 솔루션을 제공하며 지속적으로 성장하고 있으며, 현재 2028년 상장을 목표로 빠르게 도약하고 있습니다.',
+  bizKeywords: '',
+  aboutImg: '',
+  growthHeadline: '연 평균 매출 성장 속도는 로켓!',
+  revenue: [
+    { year: '2010', pct: '100%' },
+    { year: '2015', pct: '200%' },
+    { year: '2020', pct: '400%' },
+    { year: '2025', pct: '800%' },
+    { year: '2030', pct: '1600%' },
+  ],
+  welfareTab: '우리 회사의 복지는?',
+  welfare: [
+    { name: '사내 동호회 운영', desc: '캠핑, 산악회, 볼링 등 동호회비 지원' },
+    { name: '상여금', desc: '장기 근속자 포상' },
+    { name: '휴가 제도', desc: '자유로운 연/월차 사용' },
+    { name: '식사 제공', desc: '조식, 중식, 석식, 간식까지' },
+    { name: '자기계발 지원', desc: '자기계발 위한 도서구입비 지원' },
+    { name: '인센티브 지급', desc: '매달 우수사원 인센티브 지급' },
+  ],
+  workspaceTab: '근무 공간',
+  workspaceMain: 'assets/ieg-building.jpg',
+  workspaceSub1: '', workspaceSub2: '',
+  positionsTab: '모집 분야',
+  jobs: [
+    {
+      title: '영업관리',
+      empType: '', career: '', headcount: 'OO명', edu: '',
+      duties: '- 매출 데이터 관리 및 분석\n- 영업 실적 회계 및 리포트 작성\n- 영업 활동 및 수주 관련 회계 관리\n- 영업 지원 업무(안전/제안/자금 관리 등)\n- 라이센싱 및 기타 데이터 관리\n- 나라장터 관련 업무 지원',
+      require: '- 학력 무관',
+      prefer: '- 나라장터, 아마란스 10 활용 능숙자 우대',
+      location: '',
+    },
+  ],
+  processHeadline: '전형 절차',
+  steps: [ { name: '서류' }, { name: '면접 1차' }, { name: '면접 2차' }, { name: '최종 합격' } ],
+  applyHeadline: '',
+  applyPeriod: '2026.08.01 ~ 채용시',
+  applyMethod: '사람인 지원',
+});
+
+const ICONS = {
+  incentive: '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M7 4h10v3a5 5 0 0 1-10 0z"/><path d="M7 5H4v1a3 3 0 0 0 3 3M17 5h3v1a3 3 0 0 1-3 3"/><path d="M12 12v3.5M9.2 20h5.6M10 20l.5-4.5M14 20l-.5-4.5"/></svg>',
+  bonus: '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8.6 3.6h6.8l-1.1 3.1H9.7z"/><path d="M14.3 6.7c2.6 1.4 4.1 4.1 4.1 7.7 0 3.9-2.4 5.4-6.4 5.4s-6.4-1.5-6.4-5.4c0-3.6 1.5-6.3 4.1-7.7"/><path d="M12 10.4v6.1M10.4 11.9c0-.8.7-1.2 1.6-1.2s1.6.5 1.6 1.2M13.6 14.9c0 .8-.7 1.2-1.6 1.2s-1.6-.5-1.6-1.2"/></svg>',
+  vacation: '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><rect x="3.5" y="7.5" width="17" height="12" rx="2.4"/><path d="M8.5 7.5V6a2 2 0 0 1 2-2h3a2 2 0 0 1 2 2v1.5"/><path d="M3.5 13h17"/></svg>',
+  meal: '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M8 3v9M6 3v3.4a2 2 0 0 0 4 0V3M8 12v9"/><path d="M16.2 3c-1.6 0-2.7 2.1-2.7 5.1 0 2.3 1.1 3.5 2.7 3.5s2.7-1.2 2.7-3.5C18.9 5.1 17.8 3 16.2 3zM16.2 11.6V21"/></svg>',
+  selfdev: '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.4C10.5 5 8 4.4 4 4.4v13c4 0 6.5.6 8 2 1.5-1.4 4-2 8-2v-13c-4 0-6.5.6-8 2z"/><path d="M12 6.4v13"/></svg>',
+  club: '<svg width="44" height="44" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="2.6"/><circle cx="5.4" cy="10" r="2.1"/><circle cx="18.6" cy="10" r="2.1"/><path d="M8 19v-.7a4 4 0 0 1 8 0v.7"/><path d="M2.6 18.4v-.4a3.1 3.1 0 0 1 4.2-2.9"/><path d="M21.4 18.4v-.4a3.1 3.1 0 0 0-4.2-2.9"/></svg>',
+};
+const ICON_ORDER = ['club', 'bonus', 'vacation', 'meal', 'selfdev', 'incentive'];
+
+class Component extends DCLogic {
+  state = {
+    d: DEFAULTS(),
+    open: { basic: true, about: false, numbers: false, welfare: false, workspace: false, positions: false, process: false, apply: false },
+    dl: false,
+  };
+  poster = React.createRef();
+
+  split(s) { return (s || '').split(',').map(x => x.trim()).filter(Boolean); }
+
+  onField = (e) => {
+    const k = e.target.dataset.k, v = e.target.value;
+    this.setState(s => ({ d: { ...s.d, [k]: v } }));
+  };
+  onArr = (e) => {
+    const { arr, i, f } = e.target.dataset, idx = +i, v = e.target.value;
+    this.setState(s => ({ d: { ...s.d, [arr]: s.d[arr].map((it, x) => x === idx ? { ...it, [f]: v } : it) } }));
+  };
+  removeItem = (e) => {
+    const { arr, i } = e.currentTarget.dataset, idx = +i;
+    this.setState(s => ({ d: { ...s.d, [arr]: s.d[arr].filter((_, x) => x !== idx) } }));
+  };
+  onImg = (e) => {
+    const k = e.target.dataset.k, file = e.target.files && e.target.files[0];
+    if (!file) return;
+    const r = new FileReader();
+    r.onload = () => this.setState(s => ({ d: { ...s.d, [k]: r.result } }));
+    r.readAsDataURL(file);
+  };
+  addJob = () => this.setState(s => ({ d: { ...s.d, jobs: [...s.d.jobs, { title: '새 직무명', empType: '정규직', career: '신입 / 경력', headcount: 'O명', edu: '대졸 이상', duties: '', require: '', prefer: '', location: '' }] } }));
+  addStep = () => this.setState(s => ({ d: { ...s.d, steps: [...s.d.steps, { name: '새 단계' }] } }));
+  addRevenue = () => this.setState(s => ({ d: { ...s.d, revenue: [...s.d.revenue, { year: '구간', pct: '000%' }] } }));
+  toggle = (e) => {
+    const sec = e.currentTarget.dataset.sec;
+    this.setState(s => ({ open: { ...s.open, [sec]: !s.open[sec] } }));
+  };
+  reset = () => { if (confirm('초기 예시 데이터로 되돌릴까요?')) this.setState({ d: DEFAULTS() }); };
+
+  exportData = () => {
+    const data = JSON.parse(JSON.stringify(this.state.d));
+    ['heroImg', 'aboutImg', 'workspaceMain', 'workspaceSub1', 'workspaceSub2'].forEach(k => {
+      if (data[k] && data[k].startsWith('data:')) data[k] = '(업로드된 이미지)';
+    });
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const link = document.createElement('a');
+    link.download = 'IEG_Recruit_Data.json';
+    link.href = URL.createObjectURL(blob);
+    link.click();
+    setTimeout(() => URL.revokeObjectURL(link.href), 1000);
+  };
+
+  downloadPng = async () => {
+    if (this.state.dl || !window.html2canvas || !this.poster.current) return;
+    this.setState({ dl: true });
+    try {
+      if (document.fonts && document.fonts.ready) await document.fonts.ready;
+      const node = this.poster.current;
+      const imgs = Array.from(node.querySelectorAll('img'));
+      await Promise.all(imgs.map(img => (img.complete && img.naturalWidth) ? null : new Promise(res => { img.onload = img.onerror = res; })));
+      await new Promise(r => setTimeout(r, 120));
+      const canvas = await window.html2canvas(node, {
+        scale: 3, backgroundColor: '#DFE9FF', useCORS: true, logging: false,
+        width: node.offsetWidth, height: node.offsetHeight,
+        windowWidth: node.scrollWidth, windowHeight: node.scrollHeight,
+      });
+      const link = document.createElement('a');
+      link.download = '아이지 채용 공고.png';
+      link.href = canvas.toDataURL('image/png');
+      link.click();
+    } catch (err) { console.error(err); alert('PNG 생성 중 문제가 발생했습니다. 다시 시도해 주세요.'); }
+    finally { this.setState({ dl: false }); }
+  };
+
+  imgEl(src) {
+    if (!src) return null;
+    return React.createElement('img', { src, alt: '', style: { width: '100%', height: '100%', objectFit: 'cover', display: 'block' } });
+  }
+
+  iconEl(key) {
+    return React.createElement('span', { dangerouslySetInnerHTML: { __html: ICONS[key] || ICONS.incentive }, style: { display: 'flex' } });
+  }
+
+  growthHeights(items) {
+    const LO = 6, HI = 95;
+    const n = items.length;
+    if (n <= 1) return [88];
+    const curve = () => items.map((_, i) => Math.round(LO + Math.pow(i / (n - 1), 1.3) * (HI - LO)));
+    const vals = items.map(r => {
+      const v = parseFloat(String(r.pct == null ? '' : r.pct).replace(/[^\d.-]/g, ''));
+      return Number.isFinite(v) ? v : null;
+    });
+    if (vals.some(v => v === null)) return curve();
+    const min = Math.min(...vals), max = Math.max(...vals);
+    if (max === min) return vals.map(() => Math.round((LO + HI) / 2));
+    return vals.map(v => Math.round(LO + (v - min) / (max - min) * (HI - LO)));
+  }
+
+  buildGrowth() {
+    const h = React.createElement;
+    const items = this.state.d.revenue;
+    const n = items.length || 1;
+    const dotHs = this.growthHeights(items);
+    const barHs = dotHs.map(v => Math.max(2, v - 13));
+    const xs = items.map((_, i) => (i + 0.5) / n * 100);
+    const ys = dotHs.map(v => 100 - v);
+    const H = 290;
+    const bars = h('div', { style: { position: 'absolute', inset: 0, display: 'flex', alignItems: 'flex-end' } },
+      items.map((_, i) => h('div', { key: i, style: { flex: 1, display: 'flex', justifyContent: 'center' } },
+        h('div', { style: { width: '44%', maxWidth: 50, height: barHs[i] + '%', background: 'linear-gradient(180deg,#C9DAFF,#F2F6FF)', borderRadius: '12px 12px 0 0' } }))));
+    const linePts = xs.map((x, i) => `${x.toFixed(2)},${ys[i].toFixed(2)}`).join(' ');
+    const areaPts = `${xs[0].toFixed(2)},100 ` + linePts + ` ${xs[n - 1].toFixed(2)},100`;
+    const svg = h('svg', {
+      viewBox: '0 0 100 100', preserveAspectRatio: 'none',
+      style: { position: 'absolute', inset: 0, width: '100%', height: '100%', overflow: 'visible' },
+    },
+      h('defs', null, h('linearGradient', { id: 'iegGrow', x1: '0', y1: '0', x2: '0', y2: '1' },
+        h('stop', { offset: '0%', stopColor: '#3B7CFF', stopOpacity: '0.20' }),
+        h('stop', { offset: '100%', stopColor: '#3B7CFF', stopOpacity: '0' }))),
+      h('polygon', { points: areaPts, fill: 'url(#iegGrow)', stroke: 'none' }),
+      h('polyline', { points: linePts, fill: 'none', stroke: '#3B7CFF', strokeWidth: 3.4, strokeLinejoin: 'round', strokeLinecap: 'round', vectorEffect: 'non-scaling-stroke' }));
+    const dots = items.map((_, i) => {
+      const last = i === n - 1;
+      return h('div', {
+        key: 'd' + i,
+        style: {
+          position: 'absolute', left: xs[i] + '%', bottom: dotHs[i] + '%',
+          transform: 'translate(-50%, 50%)', width: last ? 22 : 14, height: last ? 22 : 14,
+          borderRadius: '50%', background: '#3B7CFF', border: '3px solid #fff',
+          boxShadow: last ? '0 5px 16px rgba(59,124,255,.45)' : '0 2px 7px rgba(0,0,0,.18)', zIndex: 3,
+        },
+      });
+    });
+    const labels = items.map((r, i) => {
+      const last = i === n - 1;
+      const gap = ((last ? 11 : 7) + 22) / H * 100;
+      return h('div', {
+        key: 'l' + i,
+        style: { position: 'absolute', left: xs[i] + '%', bottom: (dotHs[i] + gap) + '%', transform: 'translate(-64%, 0)', zIndex: 4 },
+      }, h('span', {
+        style: {
+          display: 'inline-block', fontSize: last ? 15 : 13, fontWeight: 800, color: '#fff',
+          background: last ? '#3B7CFF' : '#22357A', borderRadius: 100, padding: last ? '5px 13px' : '3px 10px',
+          whiteSpace: 'nowrap', boxShadow: '0 3px 8px rgba(0,0,0,.12)',
+        },
+      }, r.pct));
+    });
+    const chart = h('div', { style: { position: 'relative', height: H, borderBottom: '2px solid #eef0f4' } }, bars, svg, ...dots, ...labels);
+    const years = h('div', { style: { display: 'flex', marginTop: 16 } },
+      items.map((r, i) => h('div', { key: 'y' + i, style: { flex: 1, textAlign: 'center', fontSize: 14, fontWeight: 700, color: '#888' } }, r.year)));
+    return h('div', { style: { paddingTop: 60 } }, chart, years);
+  }
+
+  renderVals() {
+    const d = this.state.d, open = this.state.open;
+    const welfareCards = d.welfare.map((w, i) => ({ ...w, icon: this.iconEl(ICON_ORDER[i] || 'incentive') }));
+    const jobCards = d.jobs.map((j, i) => ({ ...j, num: i + 1, jobMeta: [j.empType, j.career, j.edu].filter(Boolean).join(' · ') }));
+    const stepCards = d.steps.map((s, i) => ({ ...s, num: String(i + 1).padStart(2, '0'), showLine: i < d.steps.length - 1 ? '1' : '' }));
+    const wsSubs = [d.workspaceSub1, d.workspaceSub2].filter(Boolean);
+    const arrow = (o) => (o ? '−' : '+');
+    const strip = d.heroStrip || '';
+    const kr = d.companyKr || '';
+    const heroStripRest = strip.startsWith(kr) ? strip.slice(kr.length) : ' ' + strip;
+    const titleLines = (d.mainTitle || '').split('\n');
+    const titleLead = titleLines[0] || '';
+    const titleRest = titleLines.slice(1).join('\n');
+    return {
+      d, open, dlLabel: this.state.dl ? '생성 중…' : 'PNG 다운로드',
+      poster: this.poster,
+      onField: this.onField, onArr: this.onArr, onImg: this.onImg,
+      removeItem: this.removeItem, addJob: this.addJob, addStep: this.addStep, addRevenue: this.addRevenue,
+      toggle: this.toggle, reset: this.reset, downloadPng: this.downloadPng, exportData: this.exportData,
+      openBasic: arrow(open.basic), openAbout: arrow(open.about), openNumbers: arrow(open.numbers),
+      openWelfare: arrow(open.welfare), openWorkspace: arrow(open.workspace), openPositions: arrow(open.positions),
+      openProcess: arrow(open.process), openApply: arrow(open.apply),
+      heroTagList: this.split(d.heroTags), bizList: this.split(d.bizKeywords),
+      heroStripRest, titleLead, titleRest,
+      growthGraphic: this.buildGrowth(),
+      welfareCards, jobCards, stepCards,
+      heroImgSrc: d.heroImg || undefined, aboutImgSrc: d.aboutImg || undefined, wsMainSrc: d.workspaceMain || undefined,
+      heroImgEl: this.imgEl(d.heroImg), aboutImgEl: this.imgEl(d.aboutImg),
+      wsMainEl: this.imgEl(d.workspaceMain), wsSubEls: wsSubs.map(s => this.imgEl(s)),
+      wsSubs, hasWsSubs: wsSubs.length ? '1' : '', wsSubCols: wsSubs.length === 1 ? '1fr' : '1fr 1fr',
+    };
+  }
+}
+</script>
+</body>
+</html>

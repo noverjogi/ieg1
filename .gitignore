@@ -1,0 +1,14 @@
+# dc 편집기가 생성한 업로드 사본 (assets/ 원본과 중복)
+Design request prompt/
+
+# Vercel
+.vercel/
+
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editor
+.vscode/
+.idea/
