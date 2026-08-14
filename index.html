@@ -53,7 +53,6 @@
         <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">대형 타이틀 (줄바꿈 가능)</label><textarea data-k="mainTitle" onInput="{{ onField }}" value="{{ d.mainTitle }}" placeholder="예: 미래 산업을 함께 만들 동료" style="width:100%;min-height:66px;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;line-height:1.5;"></textarea></div>
         <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">서브 문구</label><input data-k="heroSub" value="{{ d.heroSub }}" onInput="{{ onField }}" placeholder="예: IEG와 함께 성장할 새로운 인재를 찾습니다!" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
         <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">모집 직무 태그</label><input data-k="jobHeadline" value="{{ d.jobHeadline }}" onInput="{{ onField }}" placeholder="예: 스마트팩토리 제어설계 엔지니어 채용" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
-        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">HERO 하단 스트립 문구</label><input data-k="heroStrip" value="{{ d.heroStrip }}" onInput="{{ onField }}" placeholder="예: (주)아이지에서 미래를 함께 만들 인재를 기다립니다" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
         <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">기술 키워드 (쉼표로 구분)</label><input data-k="heroTags" value="{{ d.heroTags }}" onInput="{{ onField }}" placeholder="SMART FACTORY, ROBOT, AI" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
         <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">HERO 이미지 (선택)</label><input type="file" accept="image/*" data-k="heroImg" onChange="{{ onImg }}" style="width:100%;font-size:12px;color:#666;" /></div>
       </div>
@@ -249,13 +248,6 @@
         </div>
       </section>
 
-      <!-- HERO STRIP -->
-      <sc-if value="{{ d.heroStrip }}" hint-placeholder-val="">
-      <div style="text-align:center;padding:4px 10px 8px;">
-        <p style="margin:0;font-size:18px;font-weight:700;color:#1B2340;letter-spacing:-.01em;"><span style="color:#FF5C8A;">{{ d.companyKr }}</span>{{ heroStripRest }}</p>
-      </div>
-      </sc-if>
-
       <!-- ABOUT -->
       <section style="background:#ffffff;border-radius:22px;padding:44px;">
         <div style="display:flex;justify-content:center;margin-bottom:30px;">
@@ -401,12 +393,10 @@
 </x-dc>
 <script type="text/x-dc" data-dc-script>
 const DEFAULTS = () => ({
-  companyKr: '(주)아이지', companyEn: 'IEG',
   recruitLabel: '2026년 아이지',
   mainTitle: '직원 채용 공고',
   heroSub: '(주)아이지에서 크리에이티브한 인재를 기다립니다',
   jobHeadline: '',
-  heroStrip: '',
   heroTags: '',
   heroImg: '',
   aboutTab: '우리 회사는요?',
@@ -621,9 +611,6 @@ class Component extends DCLogic {
     const stepCards = d.steps.map((s, i) => ({ ...s, num: String(i + 1).padStart(2, '0'), showLine: i < d.steps.length - 1 ? '1' : '' }));
     const wsSubs = [d.workspaceSub1, d.workspaceSub2].filter(Boolean);
     const arrow = (o) => (o ? '−' : '+');
-    const strip = d.heroStrip || '';
-    const kr = d.companyKr || '';
-    const heroStripRest = strip.startsWith(kr) ? strip.slice(kr.length) : ' ' + strip;
     const titleLines = (d.mainTitle || '').split('\n');
     const titleLead = titleLines[0] || '';
     const titleRest = titleLines.slice(1).join('\n');
@@ -637,7 +624,7 @@ class Component extends DCLogic {
       openWelfare: arrow(open.welfare), openWorkspace: arrow(open.workspace), openPositions: arrow(open.positions),
       openProcess: arrow(open.process), openApply: arrow(open.apply),
       heroTagList: this.split(d.heroTags), bizList: this.split(d.bizKeywords),
-      heroStripRest, titleLead, titleRest,
+      titleLead, titleRest,
       growthGraphic: this.buildGrowth(),
       welfareCards, jobCards, stepCards,
       heroImgSrc: d.heroImg || undefined, aboutImgSrc: d.aboutImg || undefined, wsMainSrc: d.workspaceMain || undefined,
