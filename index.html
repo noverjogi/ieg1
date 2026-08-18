@@ -34,9 +34,9 @@
         <div style="font-size:14px;font-weight:800;color:#1B2340;line-height:1.1;">아이지 채용 공고 생성기</div>
       </div>
       <div style="display:flex;gap:8px;margin-top:16px;">
-        <button onClick="{{ downloadPng }}" style="flex:1;padding:12px 10px;border:none;border-radius:100px;background:#3B7CFF;color:#fff;font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap;">{{ dlLabel }}</button>
-        <button onClick="{{ exportData }}" style="flex:1;padding:12px 10px;border:1.5px solid #3B7CFF;border-radius:100px;background:#fff;color:#3B7CFF;font-size:12.5px;font-weight:800;cursor:pointer;white-space:nowrap;">데이터 내보내기</button>
-        <button onClick="{{ reset }}" style="flex:0 0 auto;padding:12px 16px;border:1.5px solid #ddd;border-radius:100px;background:#fff;color:#555;font-size:12.5px;font-weight:700;cursor:pointer;">초기화</button>
+        <button onClick="{{ downloadPng }}" style="flex:1;padding:12px 10px;border:none;border-radius:100px;background:#3B7CFF;color:#fff;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;">{{ dlLabel }}</button>
+        <button onClick="{{ exportData }}" style="flex:1;padding:12px 10px;border:1.5px solid #3B7CFF;border-radius:100px;background:#fff;color:#3B7CFF;font-size:13px;font-weight:800;cursor:pointer;white-space:nowrap;">데이터 내보내기</button>
+        <button onClick="{{ reset }}" style="flex:0 0 auto;padding:12px 16px;border:1.5px solid #ddd;border-radius:100px;background:#fff;color:#555;font-size:13px;font-weight:700;cursor:pointer;">초기화</button>
       </div>
       <div style="font-size:11px;color:#aaa;margin-top:9px;line-height:1.45;">완성된 오른쪽 공고만 고화질 PNG로 저장됩니다.<br />입력 내용은 데이터 내보내기로 저장·공유할 수 있습니다.</div>
     </div>
@@ -228,7 +228,7 @@
             </sc-if>
             <div style="margin-top:24px;width:150px;height:3px;border-radius:3px;background:linear-gradient(90deg,transparent,#3B7CFF,transparent);"></div>
           </div>
-          <p style="margin:26px auto 0;font-size:23px;font-weight:600;color:#AFC7FF;letter-spacing:-.01em;max-width:600px;line-height:1.5;">{{ d.heroSub }}</p>
+          <p style="margin:26px auto 0;font-size:22px;font-weight:600;color:#AFC7FF;letter-spacing:-.01em;max-width:600px;line-height:1.5;">{{ d.heroSub }}</p>
           <sc-if value="{{ heroImgSrc }}" hint-placeholder-val="">
             <div style="margin:32px auto 0;width:100%;border-radius:18px;overflow:hidden;height:280px;border:1px solid rgba(120,160,255,.25);">{{ heroImgEl }}</div>
           </sc-if>
@@ -236,7 +236,7 @@
           <div style="margin-top:28px;display:flex;justify-content:center;">
             <div style="display:inline-flex;align-items:center;gap:10px;background:rgba(255,255,255,.08);border:1px solid rgba(120,160,255,.3);border-radius:100px;padding:11px 24px;">
               <div style="width:9px;height:9px;border-radius:50%;background:#3B7CFF;"></div>
-              <span style="font-size:17px;font-weight:800;color:#fff;letter-spacing:-.01em;">{{ d.jobHeadline }}</span>
+              <span style="font-size:16px;font-weight:800;color:#fff;letter-spacing:-.01em;">{{ d.jobHeadline }}</span>
             </div>
           </div>
           </sc-if>
@@ -253,7 +253,7 @@
         <div style="display:flex;justify-content:center;margin-bottom:30px;">
           <span style="display:inline-flex;align-items:center;background:#3B7CFF;color:#fff;font-size:20px;font-weight:800;letter-spacing:-.01em;padding:11px 28px;border-radius:100px;">{{ d.aboutTab }}</span>
         </div>
-        <h2 style="margin:0 0 20px;font-size:29px;font-weight:800;line-height:1.4;color:#1B2340;letter-spacing:-.02em;text-align:center;">{{ d.aboutHeadline }}</h2>
+        <h2 style="margin:0 0 20px;font-size:28px;font-weight:800;line-height:1.4;color:#1B2340;letter-spacing:-.02em;text-align:center;">{{ d.aboutHeadline }}</h2>
         <p style="margin:0 auto;font-size:16px;line-height:1.8;color:#666;max-width:620px;text-align:center;white-space:pre-line;">{{ d.aboutBody }}</p>
         <div style="margin-top:26px;display:flex;flex-wrap:wrap;gap:9px;justify-content:center;">
           <sc-for list="{{ bizList }}" as="b" hint-placeholder-count="6">
@@ -280,7 +280,7 @@
           <sc-for list="{{ welfareCards }}" as="w" hint-placeholder-count="6">
             <div style="text-align:center;padding:20px 14px;border-radius:16px;">
               <div style="width:62px;height:62px;border-radius:50%;background:#E8EFFF;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;color:#3B7CFF;" data-om-raster>{{ w.icon }}</div>
-              <div style="font-size:17px;font-weight:800;color:#3B7CFF;margin-bottom:7px;">{{ w.name }}</div>
+              <div style="font-size:16px;font-weight:800;color:#3B7CFF;margin-bottom:7px;">{{ w.name }}</div>
               <sc-if value="{{ w.desc }}" hint-placeholder-val="x">
                 <div style="font-size:13px;line-height:1.55;color:#888;">{{ w.desc }}</div>
               </sc-if>
@@ -333,18 +333,18 @@
                       <div style="margin-top:5px;font-size:11px;color:#999;">{{ j.location }}</div>
                     </sc-if>
                   </td>
-                  <td style="padding:20px 18px;font-size:13.5px;line-height:1.65;color:#444;white-space:pre-line;border-right:1px solid #eef0f4;">{{ j.duties }}</td>
+                  <td style="padding:20px 18px;font-size:13px;line-height:1.65;color:#444;white-space:pre-line;border-right:1px solid #eef0f4;">{{ j.duties }}</td>
                   <td style="padding:20px 18px;border-right:1px solid #eef0f4;">
                     <sc-if value="{{ j.require }}" hint-placeholder-val="x">
                       <div style="font-size:12px;font-weight:800;color:#3B7CFF;margin-bottom:5px;">자격 요건</div>
-                      <div style="font-size:13.5px;line-height:1.65;color:#444;white-space:pre-line;">{{ j.require }}</div>
+                      <div style="font-size:13px;line-height:1.65;color:#444;white-space:pre-line;">{{ j.require }}</div>
                     </sc-if>
                     <sc-if value="{{ j.prefer }}" hint-placeholder-val="x">
                       <div style="font-size:12px;font-weight:800;color:#3B7CFF;margin:12px 0 5px;">우대 사항</div>
-                      <div style="font-size:13.5px;line-height:1.65;color:#444;white-space:pre-line;">{{ j.prefer }}</div>
+                      <div style="font-size:13px;line-height:1.65;color:#444;white-space:pre-line;">{{ j.prefer }}</div>
                     </sc-if>
                   </td>
-                  <td style="padding:20px 14px;text-align:center;font-size:15px;font-weight:800;color:#12183A;">{{ j.headcount }}</td>
+                  <td style="padding:20px 14px;text-align:center;font-size:16px;font-weight:800;color:#12183A;">{{ j.headcount }}</td>
                 </tr>
               </sc-for>
             </tbody>
@@ -362,8 +362,8 @@
               <sc-if value="{{ s.showLine }}" hint-placeholder-val="">
                 <div style="position:absolute;top:29px;left:50%;width:100%;height:3px;background:rgba(255,255,255,.14);z-index:0;"></div>
               </sc-if>
-              <div style="position:relative;z-index:1;width:58px;height:58px;border-radius:50%;background:#3B7CFF;color:#fff;display:flex;align-items:center;justify-content:center;font-size:19px;font-weight:900;">{{ s.num }}</div>
-              <div style="margin-top:15px;font-size:15px;font-weight:700;color:#fff;text-align:center;padding:0 6px;">{{ s.name }}</div>
+              <div style="position:relative;z-index:1;width:58px;height:58px;border-radius:50%;background:#3B7CFF;color:#fff;display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;">{{ s.num }}</div>
+              <div style="margin-top:15px;font-size:16px;font-weight:700;color:#fff;text-align:center;padding:0 6px;">{{ s.name }}</div>
             </div>
           </sc-for>
         </div>
@@ -592,7 +592,7 @@ class Component extends DCLogic {
         style: { position: 'absolute', left: xs[i] + '%', bottom: (dotHs[i] + gap) + '%', transform: 'translate(-64%, 0)', zIndex: 4 },
       }, h('span', {
         style: {
-          display: 'inline-block', fontSize: last ? 15 : 13, fontWeight: 800, color: '#fff',
+          display: 'inline-block', fontSize: last ? 16 : 13, fontWeight: 800, color: '#fff',
           background: last ? '#3B7CFF' : '#22357A', borderRadius: 100, padding: last ? '5px 13px' : '3px 10px',
           whiteSpace: 'nowrap', boxShadow: '0 3px 8px rgba(0,0,0,.12)',
         },
