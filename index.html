@@ -126,9 +126,11 @@
       <sc-if value="{{ open.workspace }}" hint-placeholder-val="{{ true }}">
       <div style="padding:0 22px 20px;display:flex;flex-direction:column;gap:12px;">
         <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">섹션 탭 제목</label><input data-k="workspaceTab" value="{{ d.workspaceTab }}" onInput="{{ onField }}" placeholder="예: 근무 공간" style="width:100%;padding:10px 12px;border:1px solid #e3e3e6;border-radius:8px;font-size:13px;color:#333;" /></div>
-        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">메인 이미지</label><input type="file" accept="image/*" data-k="workspaceMain" onChange="{{ onImg }}" style="width:100%;font-size:12px;color:#666;" /></div>
-        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">서브 이미지 1 (선택)</label><input type="file" accept="image/*" data-k="workspaceSub1" onChange="{{ onImg }}" style="width:100%;font-size:12px;color:#666;" /></div>
-        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">서브 이미지 2 (선택)</label><input type="file" accept="image/*" data-k="workspaceSub2" onChange="{{ onImg }}" style="width:100%;font-size:12px;color:#666;" /></div>
+        <div style="font-size:11px;font-weight:800;color:#999;line-height:1.4;">이미지 4장이 2×2로 같은 크기로 배치됩니다 (가로 방향, 1200px 이상 권장)</div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">이미지 1 (좌상)</label><input type="file" accept="image/*" data-k="workspaceImg1" onChange="{{ onImg }}" style="width:100%;font-size:12px;color:#666;" /></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">이미지 2 (우상)</label><input type="file" accept="image/*" data-k="workspaceImg2" onChange="{{ onImg }}" style="width:100%;font-size:12px;color:#666;" /></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">이미지 3 (좌하)</label><input type="file" accept="image/*" data-k="workspaceImg3" onChange="{{ onImg }}" style="width:100%;font-size:12px;color:#666;" /></div>
+        <div><label style="display:block;font-size:11px;font-weight:700;color:#777;margin-bottom:5px;">이미지 4 (우하)</label><input type="file" accept="image/*" data-k="workspaceImg4" onChange="{{ onImg }}" style="width:100%;font-size:12px;color:#666;" /></div>
       </div>
       </sc-if>
     </section>
@@ -294,13 +296,10 @@
         <div style="display:flex;justify-content:center;margin-bottom:30px;">
           <span style="display:inline-flex;align-items:center;background:#3B7CFF;color:#fff;font-size:20px;font-weight:800;letter-spacing:-.01em;padding:11px 28px;border-radius:100px;">{{ d.workspaceTab }}</span>
         </div>
-        <sc-if value="{{ wsMainSrc }}" hint-placeholder-val="x">
-          <div style="border-radius:18px;overflow:hidden;height:380px;">{{ wsMainEl }}</div>
-        </sc-if>
-        <sc-if value="{{ hasWsSubs }}" hint-placeholder-val="">
-          <div style="display:grid;grid-template-columns:{{ wsSubCols }};gap:14px;margin-top:14px;">
-            <sc-for list="{{ wsSubEls }}" as="el" hint-placeholder-count="2">
-              <div style="border-radius:16px;overflow:hidden;height:210px;">{{ el }}</div>
+        <sc-if value="{{ hasWsImgs }}" hint-placeholder-val="x">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
+            <sc-for list="{{ wsImgEls }}" as="el" hint-placeholder-count="4">
+              <div style="border-radius:16px;overflow:hidden;height:250px;">{{ el }}</div>
             </sc-for>
           </div>
         </sc-if>
@@ -422,8 +421,10 @@ const DEFAULTS = () => ({
     { name: '인센티브 지급', desc: '매달 우수사원 인센티브 지급' },
   ],
   workspaceTab: '근무 공간',
-  workspaceMain: 'assets/ieg-building.jpg',
-  workspaceSub1: 'assets/ieg-office1.jpg', workspaceSub2: 'assets/ieg-office2.jpg',
+  workspaceImg1: 'assets/ieg-building.jpg',
+  workspaceImg2: 'assets/ieg-space1.jpg',
+  workspaceImg3: 'assets/ieg-space2.jpg',
+  workspaceImg4: 'assets/ieg-space3.jpg',
   positionsTab: '모집 분야',
   jobs: [
     {
@@ -492,7 +493,7 @@ class Component extends DCLogic {
 
   exportData = () => {
     const data = JSON.parse(JSON.stringify(this.state.d));
-    ['heroImg', 'aboutImg', 'workspaceMain', 'workspaceSub1', 'workspaceSub2'].forEach(k => {
+    ['heroImg', 'aboutImg', 'workspaceImg1', 'workspaceImg2', 'workspaceImg3', 'workspaceImg4'].forEach(k => {
       if (data[k] && data[k].startsWith('data:')) data[k] = '(업로드된 이미지)';
     });
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
@@ -609,7 +610,7 @@ class Component extends DCLogic {
     const welfareCards = d.welfare.map((w, i) => ({ ...w, icon: this.iconEl(ICON_ORDER[i] || 'incentive') }));
     const jobCards = d.jobs.map((j, i) => ({ ...j, num: i + 1, jobMeta: [j.empType, j.career, j.edu].filter(Boolean).join(' · ') }));
     const stepCards = d.steps.map((s, i) => ({ ...s, num: String(i + 1).padStart(2, '0'), showLine: i < d.steps.length - 1 ? '1' : '' }));
-    const wsSubs = [d.workspaceSub1, d.workspaceSub2].filter(Boolean);
+    const wsImgs = [d.workspaceImg1, d.workspaceImg2, d.workspaceImg3, d.workspaceImg4].filter(Boolean);
     const arrow = (o) => (o ? '−' : '+');
     const titleLines = (d.mainTitle || '').split('\n');
     const titleLead = titleLines[0] || '';
@@ -627,10 +628,9 @@ class Component extends DCLogic {
       titleLead, titleRest,
       growthGraphic: this.buildGrowth(),
       welfareCards, jobCards, stepCards,
-      heroImgSrc: d.heroImg || undefined, aboutImgSrc: d.aboutImg || undefined, wsMainSrc: d.workspaceMain || undefined,
+      heroImgSrc: d.heroImg || undefined, aboutImgSrc: d.aboutImg || undefined,
       heroImgEl: this.imgEl(d.heroImg), aboutImgEl: this.imgEl(d.aboutImg),
-      wsMainEl: this.imgEl(d.workspaceMain), wsSubEls: wsSubs.map(s => this.imgEl(s)),
-      wsSubs, hasWsSubs: wsSubs.length ? '1' : '', wsSubCols: wsSubs.length === 1 ? '1fr' : '1fr 1fr',
+      wsImgEls: wsImgs.map(s => this.imgEl(s)), hasWsImgs: wsImgs.length ? '1' : '',
     };
   }
 }
